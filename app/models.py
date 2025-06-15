@@ -32,7 +32,6 @@ class Equipment(db.Model):
     status = db.Column(db.Enum('active', 'repair', 'disposed', name='status_enum'), nullable=False)
     note = db.Column(db.Text)
     image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
-    image = db.relationship('Image', backref='equipment', uselist=False)
     maintenance = db.relationship('Maintenance', backref='equipment', cascade="all, delete")
     disposal = db.relationship('Disposal', backref='equipment', uselist=False, cascade="all, delete")
     responsibles = db.relationship('User', secondary=roles, backref='assigned_equipment')

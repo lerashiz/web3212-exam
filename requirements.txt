@@ -1,0 +1,11 @@
+Flask>=2.3
+Flask-Login
+Flask-Migrate
+Flask-SQLAlchemy
+Flask-WTF
+email-validator
+python-dotenv
+Werkzeug
+WTForms
+reportlab        
+Pillow           
