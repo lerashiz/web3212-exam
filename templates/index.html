@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Главная — Учёт оборудования{% endblock %}
+{% block content %}
+{% if current_user.role == 'admin' %}
+<div class="text-end mb-3">
+    <a href="{{ url_for('equipment.add_equipment') }}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Добавить оборудование
+    </a>
+</div>
+{% endif %}
+
+<h1 class="mb-4 text-center"><i class="bi bi-grid"></i> Список оборудования</h1>
+<form method="GET" class="row mb-4">
+    <div class="col-md-3">
+        <select class="form-select" name="category">
+            <option value="">Категория</option>
+            {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if request.args.get('category') == cat.id|string %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" name="status">
+            <option value="">Статус</option>
+            <option value="active" {% if request.args.get('status') == 'active' %}selected{% endif %}>В эксплуатации</option>
+            <option value="repair" {% if request.args.get('status') == 'repair' %}selected{% endif %}>На ремонте</option>
+            <option value="disposed" {% if request.args.get('status') == 'disposed' %}selected{% endif %}>Списано</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="date" name="start_date" class="form-control" value="{{ request.args.get('start_date', '') }}">
+            <input type="date" name="end_date" class="form-control" value="{{ request.args.get('end_date', '') }}">
+        </div>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button class="btn btn-outline-light" type="submit">Фильтровать</button>
+    </div>
+</form>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for item in equipment %}
+    <div class="col">
+        <div class="card card-glow h-100">
+            {% if item.image_url %}
+                            <img src="{{ url_for('static', filename='uploads/' ~ item.image.filename) }}" class="img-fluid rounded border">
+            {% else %}
+                <div class="card-img-top text-center py-5 bg-secondary text-white">Без фото</div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ item.name }}</h5>
+                <p class="card-text mb-1"><strong>Инв. №:</strong> {{ item.inventory_number }}</p>
+                <p class="card-text mb-1"><strong>Категория:</strong> {{ item.category.name }}</p>
+                <p class="card-text mb-1">
+                    <strong>Статус:</strong>
+                    {% if item.status == 'active' %}<span class="badge bg-success">В эксплуатации</span>{% endif %}
+                    {% if item.status == 'repair' %}<span class="badge bg-warning text-dark">На ремонте</span>{% endif %}
+                    {% if item.status == 'disposed' %}<span class="badge bg-danger">Списано</span>{% endif %}
+                </p>
+                <a href="/equipment/{{ item.id }}" class="btn btn-outline-primary btn-sm mt-2"><i class="bi bi-eye"></i> Просмотр</a>
+                {% if current_user.role == 'admin' %}
+                    <a href="/equipment/{{ item.id }}/edit" class="btn btn-outline-warning btn-sm mt-2"><i class="bi bi-pencil"></i></a>
+                    <button class="btn btn-outline-danger btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#deleteModal{{ item.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                {% elif current_user.role == 'tech' %}
+                    <a href="/maintenance/add?equipment_id={{ item.id }}" class="btn btn-outline-info btn-sm mt-2">
+                        <i class="bi bi-wrench"></i> ТО
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно удаления -->
+    <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">Удаление оборудования</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                <div class="modal-body">
+                    Вы уверены, что хотите удалить оборудование <strong>{{ item.name }}</strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                    <a href="/equipment/{{ item.id }}/delete" class="btn btn-danger">Да</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Пагинация -->
+<div class="d-flex justify-content-center mt-4">
+    <nav>
+        <ul class="pagination pagination-dark">
+            {% if pagination.has_prev %}
+                <li class="page-item"><a class="page-link" href="?page={{ pagination.prev_num }}">&laquo;</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            {% endif %}
+            {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if p %}
+                    {% if p == pagination.page %}
+                        <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                {% endif %}
+            {% endfor %}
+            {% if pagination.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ pagination.next_num }}">&raquo;</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Просмотр оборудования{% endblock %}
+{% block content %}
+<h2 class="text-center mb-4">
+    <i class="bi bi-eye"></i> Просмотр оборудования
+</h2>
+
+<div class="row">
+    <div class="col-md-5">
+        {% if equipment.image_url %}
+            <img src="{{ url_for('static', filename='uploads/' ~ item.image.filename) }}" class="img-fluid rounded border">
+        {% else %}
+            <div class="bg-secondary text-center text-white p-5 rounded">Фото отсутствует</div>
+        {% endif %}
+    </div>
+    <div class="col-md-7">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-dark text-light"><strong>Название:</strong> {{ equipment.name }}</li>
+            <li class="list-group-item bg-dark text-light"><strong>Инвентарный номер:</strong> {{ equipment.inventory_number }}</li>
+            <li class="list-group-item bg-dark text-light"><strong>Категория:</strong> {{ equipment.category.name }}</li>
+            <li class="list-group-item bg-dark text-light"><strong>Дата покупки:</strong> {{ equipment.purchase_date.strftime('%d.%m.%Y') }}</li>
+            <li class="list-group-item bg-dark text-light"><strong>Стоимость:</strong> {{ equipment.price }} ₽</li>
+            <li class="list-group-item bg-dark text-light">
+                <strong>Статус:</strong>
+                {% if equipment.status == 'active' %}<span class="badge bg-success">В эксплуатации</span>{% endif %}
+                {% if equipment.status == 'repair' %}<span class="badge bg-warning text-dark">На ремонте</span>{% endif %}
+                {% if equipment.status == 'disposed' %}<span class="badge bg-danger">Списано</span>{% endif %}
+            </li>
+            {% if equipment.note %}
+                <li class="list-group-item bg-dark text-light"><strong>Примечание:</strong><br>{{ equipment.note }}</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
+<hr class="my-4">
+<h4>История обслуживания</h4>
+<table class="table table-dark table-bordered table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Тип обслуживания</th>
+            <th>Комментарий</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in maintenance_history %}
+        <tr>
+            <td>{{ record.date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ record.service_type }}</td>
+            <td>{{ record.comment }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3" class="text-center text-muted">Записей нет</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if current_user.role in ['admin', 'tech'] %}
+<hr class="my-4">
+<h4>Добавить запись об обслуживании</h4>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            {{ form.date.label(class="form-label") }}
+            {{ form.date(class="form-control") }}
+        </div>
+        <div class="col-md-4 mb-3">
+            {{ form.service_type.label(class="form-label") }}
+            {{ form.service_type(class="form-select") }}
+        </div>
+        <div class="col-md-12 mb-3">
+            {{ form.comment.label(class="form-label") }}
+            {{ form.comment(class="form-control", rows=3) }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-outline-info">
+        <i class="bi bi-plus-circle"></i> Добавить обслуживание
+    </button>
+</form>
+{% endif %}
+
+{% endblock %}

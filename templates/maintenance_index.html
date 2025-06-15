@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Обслуживание{% endblock %}
+{% block content %}
+<h2 class="mb-4 text-center"><i class="bi bi-tools"></i> Журнал обслуживания</h2>
+
+<table class="table table-dark table-bordered">
+    <thead>
+        <tr>
+            <th>Оборудование</th>
+            <th>Дата</th>
+            <th>Тип</th>
+            <th>Комментарий</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in maintenance_records %}
+        <tr>
+            <td>{{ record.equipment.name }}</td>
+            <td>{{ record.date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ record.service_type }}</td>
+            <td>{{ record.comment }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" class="text-center text-muted">Записей нет</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

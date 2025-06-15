@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Редактирование' if edit_mode else 'Добавление' }} оборудования{% endblock %}
+{% block content %}
+<h2 class="mb-4 text-center">
+    {{ 'Редактирование' if edit_mode else 'Добавление' }} оборудования
+</h2>
+<form action="" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="name" class="form-label">Название</label>
+            {{ form.name(class="form-control", placeholder="Введите название") }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="inventory_number" class="form-label">Инвентарный номер</label>
+            {{ form.inventory_number(class="form-control", placeholder="Уникальный номер") }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="category" class="form-label">Категория</label>
+            {{ form.category(class="form-select") }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="purchase_date" class="form-label">Дата покупки</label>
+            {{ form.purchase_date(class="form-control") }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="price" class="form-label">Стоимость (₽)</label>
+            {{ form.price(class="form-control", placeholder="10000.00") }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Статус</label><br>
+            {% for subfield in form.status %}
+                <div class="form-check form-check-inline">
+                    {{ subfield(class="form-check-input") }}
+                    <label class="form-check-label">{{ subfield.label.text }}</label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="note" class="form-label">Примечание</label>
+        {{ form.note(class="form-control", rows=3) }}
+    </div>
+
+    {% if not edit_mode %}
+    <div class="mb-3">
+        <label for="image" class="form-label">Фотография</label>
+        {{ form.image(class="form-control") }}
+    </div>
+    {% endif %}
+
+    <div class="text-center">
+        <button type="submit" class="btn btn-success px-5">
+            <i class="bi bi-save"></i> Сохранить
+        </button>
+    </div>
+</form>
+
+{% if form.errors %}
+<div class="alert alert-danger mt-4">
+    <strong>При сохранении данных возникла ошибка.</strong><br>
+    Проверьте корректность введённых данных.
+</div>
+{% endif %}
+{% endblock %}
