@@ -8,4 +8,5 @@ python-dotenv
 Werkzeug
 WTForms
 reportlab        
-Pillow           
+Pillow
+fullcalendar-scheduler           

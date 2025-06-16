@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Календарь ТО{% endblock %}
+{% block head %}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/ru.min.js'></script>
+<style>
+    #calendar {
+        max-width: 1100px;
+        margin: 0 auto;
+        background-color: #2a2f3a;
+        border-radius: 8px;
+        padding: 20px;
+    }
+    .fc-event {
+        cursor: pointer;
+    }
+    .fc-toolbar-title {
+        color: white;
+    }
+    .fc-col-header-cell-cushion {
+        color: white;
+    }
+    .fc-daygrid-day-number {
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4"><i class="bi bi-calendar-event"></i> Календарь технического обслуживания</h2>
+
+<div id="calendar"></div>
+
+<div class="modal fade" id="eventModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventModalTitle">Информация о событии</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Оборудование:</strong> <span id="eventEquipment"></span></p>
+                <p><strong>Тип обслуживания:</strong> <span id="eventType"></span></p>
+                <p><strong>Дата:</strong> <span id="eventDate"></span></p>
+                <p><strong>Комментарий:</strong> <span id="eventComment"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'ru',
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: '/maintenance/api/events',
+        eventClick: function(info) {
+            const event = info.event;
+            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            
+            document.getElementById('eventModalTitle').textContent = event.title;
+            document.getElementById('eventEquipment').textContent = event.extendedProps.equipment;
+            document.getElementById('eventType').textContent = event.extendedProps.service_type;
+            document.getElementById('eventDate').textContent = event.start.toLocaleDateString();
+            document.getElementById('eventComment').textContent = event.extendedProps.comment || 'Нет комментария';
+            
+            modal.show();
+        }
+    });
+    calendar.render();
+});
+</script>
+{% endblock %}
