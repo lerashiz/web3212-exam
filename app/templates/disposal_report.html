@@ -27,7 +27,7 @@
             <td>{{ entry.disposal_date.strftime('%d.%m.%Y') }}</td>
             <td>{{ entry.reason }}</td>
             <td>
-                <a href="{{ url_for('static', filename='disposals/' ~ entry.pdf_filename) }}" class="btn btn-sm btn-outline-info" target="_blank">
+                <a href="{{ url_for('static', filename='disposals/' + entry.pdf_filename) }}" class="btn btn-sm btn-outline-info" target="_blank">
                     <i class="bi bi-file-earmark-pdf"></i> Открыть
                 </a>
             </td>

@@ -7,11 +7,11 @@
 
 <div class="row">
     <div class="col-md-5">
-        {% if equipment.image_url %}
-            <img src="{{ url_for('static', filename='uploads/' ~ item.image.filename) }}" class="img-fluid rounded border">
-        {% else %}
-            <div class="bg-secondary text-center text-white p-5 rounded">Фото отсутствует</div>
-        {% endif %}
+        {% if equipment.image %}
+    <img src="{{ url_for('static', filename='uploads/' + equipment.image.filename) }}" class="img-fluid rounded border">
+{% else %}
+    <div class="bg-secondary text-center text-white p-5 rounded">Фото отсутствует</div>
+{% endif %}
     </div>
     <div class="col-md-7">
         <ul class="list-group list-group-flush">

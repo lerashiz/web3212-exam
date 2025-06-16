@@ -41,8 +41,8 @@
     {% for item in equipment %}
     <div class="col">
         <div class="card card-glow h-100">
-            {% if item.image_url %}
-                            <img src="{{ url_for('static', filename='uploads/' ~ item.image.filename) }}" class="img-fluid rounded border">
+            {% if item.image %}
+                <img src="{{ url_for('static', filename='uploads/' + item.image.filename) }}" class="card-img-top img-fluid">
             {% else %}
                 <div class="card-img-top text-center py-5 bg-secondary text-white">Без фото</div>
             {% endif %}

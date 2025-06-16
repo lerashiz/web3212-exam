@@ -14,12 +14,13 @@ csrf = CSRFProtect()
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='../static')
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'devsecret')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///equipment.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = 'static/uploads/'
-
+    app.config['DISPOSAL_FOLDER'] = os.path.join(app.root_path, 'static', 'disposals')
+    
     db.init_app(app)
     Migrate(app, db)
     csrf.init_app(app)

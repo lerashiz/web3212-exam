@@ -147,3 +147,5 @@ def delete_equipment(id):
         flash('Ошибка при удалении.', 'danger')
 
     return redirect(url_for('equipment.list_equipment'))
+
+
